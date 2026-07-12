@@ -41,7 +41,7 @@
   PY
   ```
 
-##Frontend Setup
+## Frontend Setup
 
 ## Run the Project
 
