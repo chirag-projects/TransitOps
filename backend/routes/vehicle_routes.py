@@ -1,7 +1,7 @@
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from model import get_db, VehicleDAO, Vehicle, Trip, Driver
+from model import get_db, VehicleDAO, Vehicle, Trip, Driver, RoleDAO
 from model.model import VehicleStatusEnum, DriverStatusEnum
 from middleware import auth_middleware
 
@@ -11,6 +11,12 @@ vehicle_router = APIRouter(tags=["Vehicles"])
 
 @vehicle_router.post("/vehicle", status_code=status.HTTP_201_CREATED)
 def create_vehicle(vehicle_data: VehicleCreateModel, db=Depends(get_db), auth=Depends(auth_middleware)):
+    
+    role_id = auth["role_id"]
+    role = RoleDAO.get_role_by_id(db, role_id)
+    if not (role and role.vehicle_permission in ["*", "w"]):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
+    
     required = [
         "registration_number",
         "name",
@@ -40,6 +46,12 @@ def get_vehicle_dashboard(
     db=Depends(get_db),
     auth=Depends(auth_middleware),
 ):
+    
+    role_id = auth["role_id"]
+    role = RoleDAO.get_role_by_id(db, role_id)
+    if not (role and role.vehicle_permission in ["*", "w", "r"]):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
+    
     valid_vehicle_statuses = [status.value for status in VehicleStatusEnum]
     if vehicle_status and vehicle_status not in valid_vehicle_statuses:
         raise HTTPException(
@@ -115,6 +127,13 @@ def get_vehicle_dashboard(
 
 @vehicle_router.put("/vehicle/{vehicle_id}", status_code=status.HTTP_200_OK)
 def update_vehicle(vehicle_id: int, vehicle_data: dict, db=Depends(get_db), auth=Depends(auth_middleware)):
+    
+    role_id = auth["role_id"]
+    role = RoleDAO.get_role_by_id(db, role_id)
+    if not (role and role.vehicle_permission in ["*", "w"]):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
+    
+
     vehicle = VehicleDAO.get_vehicle_by_id(db, vehicle_id)
     if not vehicle:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Vehicle not found")
@@ -123,6 +142,11 @@ def update_vehicle(vehicle_id: int, vehicle_data: dict, db=Depends(get_db), auth
 
 @vehicle_router.delete("/vehicle/{vehicle_id}", status_code=status.HTTP_200_OK)
 def delete_vehicle(vehicle_id: int, db=Depends(get_db), auth=Depends(auth_middleware)):
+    role_id = auth["role_id"]
+    role = RoleDAO.get_role_by_id(db, role_id)
+    if not (role and role.vehicle_permission in ["*", "w"]):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
+
     vehicle = VehicleDAO.get_vehicle_by_id(db, vehicle_id)
     if not vehicle:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Vehicle not found")

@@ -24,7 +24,8 @@ def auth_middleware(x_auth_token=Header()):
         # get the id from the token
         uid = verified_token.get("id")
         role = verified_token.get("role")
-        return {"id": uid, "role": role, "token": x_auth_token}
+        role_id = verified_token.get("role_id")
+        return {"id": uid, "role": role, "role_id": role_id, "token": x_auth_token}
     except jwt.PyJWTError:
         raise HTTPException(401, "Unauthorized")
 
