@@ -2,15 +2,31 @@
 
 ## Backend Setup
 
-* Setup environment 
+- Setup environment
 
-```
-python3 -m venv venv
-source venv/bin/activate
-```
+  ```bash
+  python3 -m venv venv
+  source venv/bin/activate
+  ```
 
-* Install dependencies
+- Install dependencies
 
-```
-pip3 install -r requirements.txt
-```
+  ```bash
+  pip3 install -r requirements.txt
+  ```
+
+- Running the backend server
+
+  ```bash
+  bash run.sh
+  ```
+
+  - logs will be present in backend/app.log file
+
+* Run without run script
+
+  ```bash
+  uvicorn app:app --reload --host 0.0.0.0 --port 5678
+  ```
+
+  - The API documentation will be available at http://localhost:5678/docs
