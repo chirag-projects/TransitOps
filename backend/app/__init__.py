@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routes import auth_router, user_router
+from routes import auth_router, user_router, vehicle_router
+from routes import role_router
 
 from model.model import create_tables
 
@@ -18,5 +19,7 @@ app.add_middleware(
 
 app.include_router(auth_router, prefix="/api/v1")
 app.include_router(user_router, prefix="/api/v1")
+app.include_router(vehicle_router, prefix="/api/v1")
+app.include_router(role_router, prefix="/api/v1")
 
 create_tables()
