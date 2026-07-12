@@ -73,7 +73,7 @@ class User(BaseModel):
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(50), unique=True, nullable=False)
     password = Column(String(100), nullable=False)
-    role = Column(Integer, ForeignKey("roles.id"), nullable=False)
+    role_id = Column(Integer, ForeignKey("roles.id"), nullable=False)
     login_attempts = Column(Integer, default=0)
     is_locked = Column(Integer, default=0)  # 0 for unlocked, 1 for locked
 
@@ -118,8 +118,8 @@ class Trip(BaseModel):
     id = Column(Integer, primary_key=True, autoincrement=True)
     source = Column(String(100), nullable=False)
     destination = Column(String(100), nullable=False)
-    vehicle = Column(Integer, ForeignKey("vehicles.id"), nullable=False)
-    driver = Column(Integer, ForeignKey("drivers.id"), nullable=False)
+    vehicle_id = Column(Integer, ForeignKey("vehicles.id"), nullable=False)
+    driver_id = Column(Integer, ForeignKey("drivers.id"), nullable=False)
     cargo_weight = Column(Float, nullable=False)
     planned_distance = Column(Float, nullable=False) # in KM
     lifecycle_status = Column(String(50), nullable=False) # Draft → Dispatched → Completed → Cancelled.
@@ -128,7 +128,7 @@ class Trip(BaseModel):
 class MaintenanceLog(BaseModel):
     __tablename__ = "maintenance_logs"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    vehicle = Column(Integer, ForeignKey("vehicles.id"), nullable=False)
+    vehicle_id = Column(Integer, ForeignKey("vehicles.id"), nullable=False)
     service_type = Column(String(100), nullable=False)
     cost = Column(Float, nullable=False)
     service_date = Column(Date, nullable=False)
@@ -137,7 +137,7 @@ class MaintenanceLog(BaseModel):
 class FuelLog(BaseModel):
     __tablename__ = "fuel_logs"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    vehicle = Column(Integer, ForeignKey("vehicles.id"), nullable=False)
+    vehicle_id = Column(Integer, ForeignKey("vehicles.id"), nullable=False)
     date = Column(Date, nullable=False)
     fuel_quantity = Column(Float, nullable=False)
     fuel_cost = Column(Float, nullable=False)
@@ -146,8 +146,8 @@ class FuelLog(BaseModel):
 class Expense(BaseModel):
     __tablename__ = "expenses"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    trip = Column(Integer, ForeignKey("trips.id"), nullable=False)
-    vehicle = Column(Integer, ForeignKey("vehicles.id"), nullable=False)
+    trip_id = Column(Integer, ForeignKey("trips.id"), nullable=False)
+    vehicle_id = Column(Integer, ForeignKey("vehicles.id"), nullable=False)
     expense_type = Column(String(100), nullable=False) # toll/miscellaneous/other
     amount = Column(Float, nullable=False)
     date = Column(Date, nullable=False)
