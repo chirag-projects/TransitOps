@@ -116,31 +116,6 @@ The root component that:
 - CSS
 
 ---
-
-## Run the Project
-
-Navigate to the frontend directory:
-
-```bash
-cd TransitOps/frontend
-```
-
-Install dependencies (first time only):
-
-```bash
-npm install
-```
-
-Start the development server:
-
-```bash
-npm run dev
-```
-
-Open the URL shown in the terminal (usually `http://localhost:4173`).
-
----
-
 ## Current Features
 
 - Sidebar navigation
