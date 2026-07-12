@@ -14,3 +14,13 @@ class UserBase(BaseModel):
     password: str
     role_id: int
 
+
+class VehicleCreateModel(BaseModel):
+    registration_number: str
+    name: str
+    type: str
+    max_capacity: int
+    capacity_unit: str
+    odometer_reading: int
+    acquisition_cost: float
+    status: str
