@@ -92,7 +92,7 @@ class Role(BaseModel):
 class Vehicle(BaseModel):
     __tablename__ = "vehicles"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    reistration_number = Column(String(20), unique=True, nullable=False)
+    registration_number = Column(String(20), unique=True, nullable=False)
     name = Column(String(100), nullable=False)
     type = Column(String(50), nullable=False)
     max_capacity = Column(Float, nullable=False)
@@ -123,7 +123,7 @@ class Trip(BaseModel):
     cargo_weight = Column(Float, nullable=False)
     planned_distance = Column(Float, nullable=False) # in KM
     lifecycle_status = Column(String(50), nullable=False) # Draft → Dispatched → Completed → Cancelled.
-    pass
+    
 
 class MaintenanceLog(BaseModel):
     __tablename__ = "maintenance_logs"
