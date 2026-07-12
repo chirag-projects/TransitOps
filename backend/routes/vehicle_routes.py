@@ -142,6 +142,11 @@ def update_vehicle(vehicle_id: int, vehicle_data: dict, db=Depends(get_db), auth
 
 @vehicle_router.delete("/vehicle/{vehicle_id}", status_code=status.HTTP_200_OK)
 def delete_vehicle(vehicle_id: int, db=Depends(get_db), auth=Depends(auth_middleware)):
+    role_id = auth["role_id"]
+    role = RoleDAO.get_role_by_id(db, role_id)
+    if not (role and role.vehicle_permission in ["*", "w"]):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
+
     vehicle = VehicleDAO.get_vehicle_by_id(db, vehicle_id)
     if not vehicle:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Vehicle not found")
