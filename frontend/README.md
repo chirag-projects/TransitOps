@@ -73,3 +73,52 @@ export default defineConfig([
 ])
 
 ```
+# TransitOps Frontend
+
+A simple **React + TypeScript + Vite** frontend for the TransitOps Operations Console.
+
+## Components
+
+### Sidebar (`Sidebar.tsx`)
+
+A reusable sidebar navigation component that:
+
+- Displays navigation menu items
+- Highlights the active item
+- Calls a callback when a menu item is selected
+- Uses TypeScript for type safety
+
+**Props**
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `items` | `SidebarItem[]` | Sidebar menu items |
+| `activeItem` | `string` | Currently selected item |
+| `onSelect` | `(label: string) => void` | Updates the selected item |
+
+---
+
+### App (`App.tsx`)
+
+The root component that:
+
+- Manages the active sidebar tab using `useState`
+- Passes data to the `Sidebar` component
+- Displays the currently selected page
+
+---
+
+## Tech Stack
+
+- React
+- TypeScript
+- Vite
+- CSS
+
+---
+## Current Features
+
+- Sidebar navigation
+- Active menu highlighting
+- Dynamic page selection
+- Clean and reusable component structure
