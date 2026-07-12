@@ -30,3 +30,13 @@
   ```
 
   - The API documentation will be available at http://localhost:5678/docs
+
+* Create base admin user.
+
+  ```bash
+  cd backend && python3 - <<'PY'
+  from model.dao import seed_admin
+  seed_admin()
+  print('seed_admin() complete')
+  PY
+  ```
