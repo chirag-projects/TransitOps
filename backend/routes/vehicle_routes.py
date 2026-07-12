@@ -9,7 +9,7 @@ from routes.schemas import VehicleCreateModel
 
 vehicle_router = APIRouter(tags=["Vehicles"])
 
-@vehicle_router.post("/vehicles", status_code=status.HTTP_201_CREATED)
+@vehicle_router.post("/vehicle", status_code=status.HTTP_201_CREATED)
 def create_vehicle(vehicle_data: VehicleCreateModel, db=Depends(get_db), auth=Depends(auth_middleware)):
     required = [
         "registration_number",
@@ -32,7 +32,7 @@ def create_vehicle(vehicle_data: VehicleCreateModel, db=Depends(get_db), auth=De
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
 
 
-@vehicle_router.get("/vehicles/dashboard", status_code=status.HTTP_200_OK)
+@vehicle_router.get("/vehicle/dashboard", status_code=status.HTTP_200_OK)
 def get_vehicle_dashboard(
     vehicle_type: Optional[str] = None,
     vehicle_status: Optional[str] = None,
@@ -113,7 +113,7 @@ def get_vehicle_dashboard(
     }
 
 
-@vehicle_router.put("/vehicles/{vehicle_id}", status_code=status.HTTP_200_OK)
+@vehicle_router.put("/vehicle/{vehicle_id}", status_code=status.HTTP_200_OK)
 def update_vehicle(vehicle_id: int, vehicle_data: dict, db=Depends(get_db), auth=Depends(auth_middleware)):
     vehicle = VehicleDAO.get_vehicle_by_id(db, vehicle_id)
     if not vehicle:
@@ -121,7 +121,7 @@ def update_vehicle(vehicle_id: int, vehicle_data: dict, db=Depends(get_db), auth
     return VehicleDAO.update_vehicle(db, vehicle_id, vehicle_data)
 
 
-@vehicle_router.delete("/vehicles/{vehicle_id}", status_code=status.HTTP_200_OK)
+@vehicle_router.delete("/vehicle/{vehicle_id}", status_code=status.HTTP_200_OK)
 def delete_vehicle(vehicle_id: int, db=Depends(get_db), auth=Depends(auth_middleware)):
     vehicle = VehicleDAO.get_vehicle_by_id(db, vehicle_id)
     if not vehicle:
