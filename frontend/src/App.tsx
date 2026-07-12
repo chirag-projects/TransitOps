@@ -4,7 +4,7 @@ import { LoginPage, type LoginPayload } from './components/LoginPage.tsx'
 import { Sidebar, type SidebarItem } from './components/Sidebar.tsx'
 import './App.css'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api/v1/login'
+const API_BASE_URL = '/api/v1'
 const AUTH_TOKEN_KEY = 'x_auth_token'
 const AUTH_USER_KEY = 'transitops_user'
 
