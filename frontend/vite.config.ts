@@ -15,7 +15,7 @@ export default defineConfig({
     open: true,
     strictPort: true,
     proxy: {
-      '/': { target: 'http://localhost:5678/api/v1/', changeOrigin: true },
+      '/api/v1/': { target: 'http://localhost:5678/api/v1/', changeOrigin: true },
     },
   },
   resolve: {
