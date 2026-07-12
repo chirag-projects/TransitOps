@@ -1,8 +1,9 @@
 import jwt
 import os
 from dotenv import load_dotenv
-from fastapi import Header, HTTPException
+from fastapi import Header, Depends, HTTPException 
 
+from datetime import datetime, timedelta
 
 load_dotenv()
 
@@ -22,6 +23,37 @@ def auth_middleware(x_auth_token=Header()):
 
         # get the id from the token
         uid = verified_token.get("id")
-        return {"id": uid, "token": x_auth_token}
+        role = verified_token.get("role")
+        return {"id": uid, "role": role, "token": x_auth_token}
     except jwt.PyJWTError:
         raise HTTPException(401, "Unauthorized")
+
+
+def admin_middleware(auth=Depends(auth_middleware)):
+    if auth.get("role") != "admin":
+        raise HTTPException(403, "Forbidden: Admins only.")
+    return auth
+
+def generate_jwt_token(user):
+    """Generate a JWT token for the authenticated user."""
+
+    role_name = None
+    if getattr(user, "role", None) is not None and hasattr(user.role, "role"):
+        role_name = user.role.role
+    
+
+    if not role_name:
+        raise ValueError("Unable to determine user role for JWT generation")
+
+
+    payload = {
+        "id": user.id,
+        "username": user.username,
+        "role": role_name,
+        "role_id": user.role_id,
+        "exp": datetime.now() + timedelta(hours=1)  # Token expires in 1 hour
+    }
+
+    print(payload)
+    token = jwt.encode(payload, jwt_secret_key, algorithm="HS256")
+    return token

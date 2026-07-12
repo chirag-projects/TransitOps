@@ -1,7 +1,7 @@
 import uuid
 import bcrypt
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Union, Literal
 from fastapi import HTTPException
 
@@ -13,7 +13,7 @@ from sqlalchemy.exc import IntegrityError
 from .database import get_db, SessionLocal
 
 
-from .model import BaseModel, User, Role, Vehicle, Driver, Trip, MaintenanceLog, FuelLog, Expenses
+from .model import BaseModel, User, Role, Vehicle, Driver, Trip, MaintenanceLog, FuelLog, Expense
 
 
 class UserDAO:
@@ -30,6 +30,27 @@ class UserDAO:
         except IntegrityError:
             db.rollback()
             raise HTTPException(status_code=400, detail="Username already exists")
+
+    @classmethod
+    def authenticate_user(cls, db, credentials: dict):
+        """Authenticate a user by username and password."""
+        user = cls.get_user_by_username(db, credentials["username"])
+        if not user:
+            return {"error": "Invalid username", "status_code": 401, "message": "Invalid credentials"}
+        if user and bcrypt.checkpw(credentials["password"].encode('utf-8'), user.password.encode('utf-8')):
+            user.login_attempts = 0
+            db.commit() 
+            return user
+        user.login_attempts += 1
+        if user.login_attempts >= 5:
+            user.is_locked = True
+        db.add(user)
+        db.commit()
+        if user.is_locked:
+            return {"error": "Account locked due to multiple failed login attempts", "status_code": 403, "message": "Account locked"}
+        return {"error": "Invalid password", "status_code": 401, "message": "Invalid credentials"}
+
+    
 
     @classmethod
     def get_user_by_username(cls, db, username: str):
@@ -357,7 +378,7 @@ class FuelLogDAO:
 class ExpenseDAO:
     @classmethod
     def create_expense(cls, db, data: dict):
-        new_expense = Expenses(**data)
+        new_expense = Expense(**data)
         db.add(new_expense)
         try:
             db.commit()
@@ -370,15 +391,15 @@ class ExpenseDAO:
     @classmethod
     def get_expense_by_id(cls, db, expense_id: int):
         """Return an Expense by ID or None."""
-        return db.query(Expenses).filter(Expenses.id == expense_id).first()
+        return db.query(Expense).filter(Expense.id == expense_id).first()
 
     @classmethod    
     def filter_expenses(cls, db, filters: dict):
         """Filter expenses based on provided criteria."""
-        query = db.query(Expenses)
+        query = db.query(Expense)
         for key, value in filters.items():
-            if hasattr(Expenses, key):
-                query = query.filter(getattr(Expenses, key) == value)
+            if hasattr(Expense, key):
+                query = query.filter(getattr(Expense, key) == value)
         return query.all()
 
     @classmethod

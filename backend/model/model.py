@@ -10,7 +10,7 @@ from datetime import timedelta
 
 from sqlalchemy import Column, DateTime, Integer, String, Float, ForeignKey, Date
 from sqlalchemy import UniqueConstraint
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import Enum as SQLEnum
 
@@ -76,6 +76,7 @@ class User(BaseModel):
     role_id = Column(Integer, ForeignKey("roles.id"), nullable=False)
     login_attempts = Column(Integer, default=0)
     is_locked = Column(Integer, default=0)  # 0 for unlocked, 1 for locked
+    role = relationship("Role", back_populates="users")
 
 class Role(BaseModel):
     __tablename__ = "roles"
@@ -86,7 +87,9 @@ class Role(BaseModel):
     trips_permission = Column(String(50), nullable=False) # 
     fuel_expense_permission = Column(String(50), nullable=False) 
     maintenance_permission = Column(String(50), nullable=False)
-    analytics_permission = Column(String(50), nullable=False) 
+    analytics_permission = Column(String(50), nullable=False)    
+    users = relationship("User", back_populates="role")
+    
     
 
 class Vehicle(BaseModel):
@@ -100,6 +103,10 @@ class Vehicle(BaseModel):
     odometer_reading = Column(Float, nullable=False)
     acquisition_cost = Column(Float, nullable=False)
     status = Column(SQLEnum(VehicleStatusEnum), nullable=False)
+    trips = relationship("Trip", backref="vehicle")
+    maintenance_logs = relationship("MaintenanceLog", backref="vehicle")   
+    fuel_logs = relationship("FuelLog", backref="vehicle")
+    expenses = relationship("Expense", backref="vehicle") 
 
 class Driver(BaseModel):
     __tablename__ = "drivers"
@@ -111,7 +118,8 @@ class Driver(BaseModel):
     contact_number = Column(String(15), nullable=False)
     safety_score = Column(Float, nullable=False)
     status = Column(SQLEnum(DriverStatusEnum), nullable=False)
-    pass
+    trips = relationship("Trip", backref="driver")
+
 
 class Trip(BaseModel):
     __tablename__ = "trips"
@@ -133,6 +141,7 @@ class MaintenanceLog(BaseModel):
     cost = Column(Float, nullable=False)
     service_date = Column(Date, nullable=False)
     status = Column(String(50), nullable=False) # Active → Completed → Cancelled
+
 
 class FuelLog(BaseModel):
     __tablename__ = "fuel_logs"
